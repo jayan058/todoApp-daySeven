@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import * as authServices from "../services/auth";
 import { User } from "../interface/user";
 import ForbiddenError from "../error/forbiddenError";
+import { permission } from "node:process";
 export async function login(req: Request, res: Response, next: NextFunction) {
   const { email, password } = req.body;
   try {
@@ -16,16 +17,19 @@ export async function handleTokenRefresh(
   next: NextFunction
 ) {
   const { token } = req.body;
+
   if (!token) {
     return next(new ForbiddenError("Refresh token missing"));
   }
   try {
     authServices.isRefreshTokenValid(token);
     const user = (await authServices.verifyRefreshToken(token)) as User;
+
     const accessToken = authServices.generateAccessToken({
       id: user.id,
       name: user.name,
       email: user.email,
+      permissions: user.permissions,
     });
     res.json({ accessToken });
   } catch (err) {

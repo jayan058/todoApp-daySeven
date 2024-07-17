@@ -43,6 +43,7 @@ export function authenticate(
 export function authorize() {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user!;
+
     if (
       !user.permissions.includes("users.get") ||
       !user.permissions.includes("users.post") ||

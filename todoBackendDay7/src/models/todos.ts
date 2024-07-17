@@ -16,9 +16,9 @@ export class TodoModel extends BaseModel {
       created_by: user.id,
       updated_by: user.id,
     };
-  
-    await this.queryBuilder().insert(todoToCreate).table("todos"); 
-     return {"name":todo.name,"isDone":todo.isDone}
+
+    await this.queryBuilder().insert(todoToCreate).table("todos");
+    return { name: todo.name, isDone: todo.isDone };
   }
 
   static async findTodoFromId(id) {
@@ -35,7 +35,7 @@ export class TodoModel extends BaseModel {
       status: isDone,
       updated_by: userId,
     });
-    return {"name":name,"status":isDone}
+    return { name: name, status: isDone };
   }
   static async deleteTodo(todo) {
     await this.queryBuilder().from("todos").where({ id: todo[0].id }).del();

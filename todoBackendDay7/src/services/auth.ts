@@ -53,6 +53,8 @@ export function verifyRefreshToken(token: string) {
     verify(token, config.jwt.jwt_secret!, (err, user) => {
       if (err) return reject(new ForbiddenError("Invalid refresh token"));
       resolve(user);
+  
+      
     });
   });
 }
