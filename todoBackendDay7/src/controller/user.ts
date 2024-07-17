@@ -1,13 +1,19 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
+import { AuthenticatedRequest } from "../middleware/auth";
 import * as userServices from "../services/user";
 export async function createUser(
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) {
   try {
     const { name, password, email } = req.body;
-    const message = await userServices.createUser(name, password, email);
+    const message = await userServices.createUser(
+      name,
+      password,
+      email,
+      req.user.id!
+    );
     res.json(message);
   } catch (error) {
     next(error);
@@ -15,7 +21,7 @@ export async function createUser(
 }
 
 export async function getUsers(
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -29,7 +35,7 @@ export async function getUsers(
   }
 }
 export async function deleteUser(
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -42,14 +48,19 @@ export async function deleteUser(
   }
 }
 export async function updateUser(
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) {
   try {
     const id = req.params.id;
     const { email, password } = req.body;
-    const message = await userServices.updateUser(email, password, id);
+    const message = await userServices.updateUser(
+      email,
+      password,
+      id,
+      req.user.id
+    );
     res.json(message);
   } catch (error) {
     next(error);

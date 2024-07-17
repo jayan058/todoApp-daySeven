@@ -1,5 +1,4 @@
 import { Knex } from "knex";
-import { users } from "../../models/users";
 
 const TABLE_NAME = "todos";
 
@@ -20,8 +19,8 @@ export async function up(knex: Knex): Promise<void> {
       .nullable()
       .references("id")
       .inTable("users");
-    
-      table.boolean("status").unsigned().nullable();
+
+    table.boolean("status").unsigned().nullable();
 
     table
       .bigInteger("created_by")

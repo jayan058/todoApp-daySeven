@@ -9,7 +9,8 @@ import { BCRYPT_SALT_ROUNDS } from "../constants";
 export async function createUser(
   name: string,
   password: string,
-  email: string
+  email: string,
+  user_id: string
 ) {
   if ((await userModels.UserModel.findByEmail(email)).length !== 0) {
     throw new ConflictError("Email already taken");
@@ -17,14 +18,17 @@ export async function createUser(
 
   try {
     const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
-    let data = await userModels.UserModel.create(name, hashedPassword, email);
-    return "User successfully created";
+    let data = await userModels.UserModel.create(
+      name,
+      hashedPassword,
+      email,
+      user_id
+    );
+    return data;
   } catch (error) {
     throw new ValidationError("Error creating user", " ");
   }
 }
-
-
 
 export async function getUsers(q, page, size) {
   let users = await userModels.UserModel.getUsers({ q, page, size });
@@ -39,13 +43,17 @@ export async function deleteUser(id: string) {
   if (foundUser.length == 0) {
     throw new NotFoundError("No user with that id");
   }
-  console.log(foundUser);
 
   userModels.UserModel.deleteUser(foundUser);
   return "Successfully deleted user";
 }
 
-export async function updateUser(email: string, password: string, id: string) {
+export async function updateUser(
+  email: string,
+  password: string,
+  id: string,
+  user_id
+) {
   let foundUser = await userModels.UserModel.findById(id);
   if ((await foundUser).length == 0) {
     throw new NotFoundError("No user with that ID");
@@ -60,7 +68,8 @@ export async function updateUser(email: string, password: string, id: string) {
   let data = await userModels.UserModel.updateUser(
     email,
     hashedPassword,
-    foundUser
+    foundUser,
+    user_id
   );
   return data;
 }

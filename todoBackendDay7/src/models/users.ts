@@ -1,12 +1,16 @@
 import BaseModel from "./baseModel";
 export class UserModel extends BaseModel {
-  static async create(name: string, password: string, email: string) {
+  static async create(name: string, password: string, email: string, user_id) {
     const userToCreate = {
       name: name,
       password: password,
       email: email,
+      created_by: user_id,
+      updated_by: user_id,
+      updated_at: new Date().toISOString(),
     };
     await this.queryBuilder().insert(userToCreate).table("Users");
+
     let userId = await this.queryBuilder()
       .select("id")
       .table("Users")
@@ -18,6 +22,7 @@ export class UserModel extends BaseModel {
     };
 
     await this.queryBuilder().insert(role).table("users_roles");
+    return { name: name, email: email, password: password };
   }
   static async findByEmail(email) {
     let matchingEmail = await this.queryBuilder()
@@ -39,17 +44,18 @@ export class UserModel extends BaseModel {
 
     return query;
   }
-  static async updateUser(email, password, userToUpdate) {
-    console.log("hello");
-    console.log(email);
-
-    await this.queryBuilder()
+  static async updateUser(email, password, userToUpdate, user_id) {
+    const updatedUser = await this.queryBuilder()
       .from("users")
       .where({ email: userToUpdate[0].email })
       .update({
         email: email,
         password: password,
+        updated_by: user_id,
+        updated_at: new Date().toISOString(),
       });
+
+    return { email: email, password: password };
   }
   static async findById(id) {
     let matchingId = await this.queryBuilder()

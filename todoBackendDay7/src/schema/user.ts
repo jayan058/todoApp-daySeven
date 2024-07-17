@@ -15,19 +15,16 @@ export const userIdSchema = Joi.object({
   id: Joi.number().integer().positive().required(),
 });
 export const getUserSchema = Joi.object({
-q:Joi.string().optional(),
-page:Joi.number().optional().messages({
-  "number.base":"Page must me a number"
-})
-.default(1),
-size:Joi.number()
-.min(1)
-.max(10)
-.optional()
-.messages({
-    "number.base":"Page must me a number",
-    "number.min":"Size must be greater than zero",
-    "number.max":"Size must be less than 10"
-})
+  q: Joi.string().optional(),
+  page: Joi.number()
+    .optional()
+    .messages({
+      "number.base": "Page must me a number",
+    })
+    .default(1),
+  size: Joi.number().min(1).max(10).optional().messages({
+    "number.base": "Page must me a number",
+    "number.min": "Size must be greater than zero",
+    "number.max": "Size must be less than 10",
+  }),
 });
-

@@ -16,7 +16,11 @@ export function seed(knex: Knex): Promise<void> {
         {
           name: "jaya",
           email: "jaya@jaya.com",
-          password: "$2b$10$WRtpcSefdl/Q6UvAiVdMau.wEOAOzw8ldCuO/zVyDft.WqHCtr2cG",
+          password:
+            "$2b$10$WRtpcSefdl/Q6UvAiVdMau.wEOAOzw8ldCuO/zVyDft.WqHCtr2cG",
+          updated_at:new Date().toISOString(),
+          created_by:"1",
+          updated_by:"1"
         },
       ]);
     });

@@ -16,14 +16,14 @@ export async function getAllTodos(
     next(error);
   }
 }
-export function addTodo(
+export async function addTodo(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) {
   try {
     const { body, user } = req;
-    let data = todoServices.addTodo(body, user);
+    let data = await todoServices.addTodo(body, user);
     res.json(data);
   } catch (error) {
     next(error);

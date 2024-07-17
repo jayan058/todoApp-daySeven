@@ -3,7 +3,7 @@ import { verify, TokenExpiredError } from "jsonwebtoken";
 import config from "../config";
 import UnauthorizedError from "../error/unauthorizedError";
 import ForbiddenError from "../error/forbiddenError";
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   user?: { id: string; name: string; email: string; permissions: string[] };
 }
 export function authenticate(
@@ -59,9 +59,6 @@ export function authorize() {
 export function authorizeUser() {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user!;
-
-    console.log(user);
-
     if (
       !user.permissions.includes("todos.get") ||
       !user.permissions.includes("todos.post") ||

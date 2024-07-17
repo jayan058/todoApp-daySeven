@@ -45,7 +45,6 @@ export function seed(knex: Knex): Promise<void> {
           permission_id: 8,
           role_id: 2,
         },
-        
       ]);
     });
 }
