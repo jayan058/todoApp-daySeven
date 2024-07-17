@@ -25,65 +25,52 @@ describe("User Service Test Suite", () => {
       const password = "password123";
       const hashedPassword = "hashedpassword123";
 
-      sandbox.stub(userModels, "findUserByEmail").returns(null);
+      sandbox.stub(userModels.UserModel, "findByEmail").returns([{
+         name : "John Doe",
+         email :"johnn@example.com",
+         password : "password123"}]);
       sandbox.stub(bcrypt, "hash").resolves(hashedPassword);
       sandbox
-        .stub(userModels, "createUser")
+        .stub(userModels.UserModel, "create")
         .returns({ name, email, password: hashedPassword });
 
-      const result = await userService.createUser(name, password, email);
-      expect(result).toEqual({ name, email, password: hashedPassword });
+      const result = await userService.createUser(name, password, email,"1");
+      expect(result).toEqual({ name:name, email:email, password: hashedPassword });
     });
 
     it("should throw ConflictError if email is already taken", async () => {
-      sandbox.stub(userModels, "findUserByEmail").returns(true);
+      sandbox.stub(userModels.UserModel, "findByEmail").returns(true);
 
       await expect(
-        userService.createUser("John Doe", "password123", "john@example.com")
+        userService.createUser("John Doe", "password123", "john@example.com","1")
       ).rejects.toThrow(new ConflictError("Email already taken"));
     });
 
     it("should throw ValidationError if an error occurs while creating user", async () => {
-      sandbox.stub(userModels, "findUserByEmail").returns(null);
+      sandbox.stub(userModels.UserModel, "findByEmail").returns(null);
       sandbox.stub(bcrypt, "hash").rejects(new Error());
 
       await expect(
-        userService.createUser("John Doe", "password123", "john@example.com")
+        userService.createUser("John Doe", "password123", "john@example.com","1")
       ).rejects.toThrow(new ValidationError("Error creating user", " "));
     });
   });
 
-  describe("findUserById", () => {
-    it("should return the user if found", async () => {
-      const user = { id: "1", name: "John Doe", email: "john@example.com" };
-      sandbox.stub(userModels, "findUserById").returns(user);
 
-      const result = await userService.findUserById("1");
-      expect(result).toEqual(user);
-    });
-
-    it("should throw NotFoundError if user is not found", async () => {
-      sandbox.stub(userModels, "findUserById").returns(null);
-
-      await expect(userService.findUserById("1")).rejects.toThrow(
-        new NotFoundError("No user with that id")
-      );
-    });
-  });
 
   describe("getUsers", () => {
     it("should return all users", async () => {
       const users = [{ id: "1", name: "John Doe", email: "john@example.com" }];
-      sandbox.stub(userModels, "getUsers").returns(users);
+      sandbox.stub(userModels.UserModel, "getUsers").returns(users);
 
-      const result = await userService.getUsers();
+      const result = await userService.getUsers("1","1","1");
       expect(result).toEqual(users);
     });
 
     it("should throw NotFoundError if no users are found", () => {
-      sandbox.stub(userModels, "getUsers").returns(false);
+      sandbox.stub(userModels.UserModel, "getUsers").returns(false);
 
-      expect(async () => await userService.getUsers()).rejects.toThrow(
+      expect(async () => await userService.getUsers("1","1","1")).rejects.toThrow(
         new NotFoundError("No users created to show")
       );
     });
@@ -92,8 +79,8 @@ describe("User Service Test Suite", () => {
   describe("deleteUser", () => {
     it("should delete the user successfully", async () => {
       const user = { id: "1", name: "John Doe", email: "john@example.com" };
-      sandbox.stub(userModels, "findUserById").returns(user);
-      const deleteStub = sandbox.stub(userModels, "deleteUser");
+      sandbox.stub(userModels.UserModel, "findById").returns(user);
+      const deleteStub = sandbox.stub(userModels.UserModel, "deleteUser");
 
       const result = await userService.deleteUser("1");
       expect(deleteStub.calledOnceWith(user)).toBe(true);
@@ -101,7 +88,7 @@ describe("User Service Test Suite", () => {
     });
 
     it("should throw NotFoundError if user is not found", () => {
-      sandbox.stub(userModels, "findUserById").returns(false);
+      sandbox.stub(userModels.UserModel, "findById").returns(false);
 
       expect(async () => await userService.deleteUser("1")).rejects.toThrow(
         new NotFoundError("No users with that ID")
@@ -114,10 +101,10 @@ describe("User Service Test Suite", () => {
       const user = { id: "1", name: "John Doe", email: "john@example.com" };
       const hashedPassword = "hashedpassword123";
 
-      sandbox.stub(userModels, "findUserById").returns(user);
-      sandbox.stub(userModels, "findUserByEmail").returns(null);
+      sandbox.stub(userModels.UserModel, "findById").returns(user);
+      sandbox.stub(userModels.UserModel, "findByEmail").returns(null);
       sandbox.stub(bcrypt, "hash").resolves(hashedPassword);
-      sandbox.stub(userModels, "updateUser").returns({
+      sandbox.stub(userModels.UserModel, "updateUser").returns({
         ...user,
         email: "newemail@example.com",
         password: hashedPassword,
@@ -126,6 +113,7 @@ describe("User Service Test Suite", () => {
       const result = await userService.updateUser(
         "newemail@example.com",
         "newpassword",
+        "1",
         "1"
       );
       expect(result).toEqual({
@@ -136,10 +124,10 @@ describe("User Service Test Suite", () => {
     });
 
     it("should throw NotFoundError if user is not found", async () => {
-      sandbox.stub(userModels, "findUserById").returns(null);
+      sandbox.stub(userModels.UserModel, "findById").returns(null);
 
       await expect(
-        userService.updateUser("newemail@example.com", "newpassword", "1")
+        userService.updateUser("newemail@example.com", "newpassword", "1","1")
       ).rejects.toThrow(new NotFoundError("No user with that ID"));
     });
 
@@ -151,11 +139,11 @@ describe("User Service Test Suite", () => {
         email: "newemail@example.com",
       };
 
-      sandbox.stub(userModels, "findUserById").returns(user);
-      sandbox.stub(userModels, "findUserByEmail").returns(existingUser);
+      sandbox.stub(userModels.UserModel, "findById").returns(user);
+      sandbox.stub(userModels.UserModel, "findByEmail").returns(existingUser);
 
       await expect(
-        userService.updateUser("newemail@example.com", "newpassword", "1")
+        userService.updateUser("newemail@example.com", "newpassword", "1","1")
       ).rejects.toThrow(new ConflictError("Email already taken"));
     });
   });

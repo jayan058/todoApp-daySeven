@@ -15,7 +15,7 @@ export async function getAllTodos(user: any) {
 export async function addTodo(todo: ITodo, headers: any) {
   const userId = headers.id;
   const user = await userModels.UserModel.findById(userId);
-  
+
   if (!user) {
     throw new NotFoundError("User Not Found");
   }
@@ -38,8 +38,13 @@ export async function updateTodo(
   if (todo[0].userId != userId) {
     throw new UnauthorizedError("Cannot update someone else's Todo");
   }
-  let updatedData=todosModels.TodoModel.updateTodo(todo, name, isDone, userId);
-  return updatedData
+  let updatedData = todosModels.TodoModel.updateTodo(
+    todo,
+    name,
+    isDone,
+    userId
+  );
+  return updatedData;
 }
 export async function deleteTodo(id: string, userId: string) {
   const todo = await todosModels.TodoModel.findTodoFromId(id);
