@@ -14,7 +14,7 @@ npm run seed:run
 
 - POST :http://localhost:8000/user for creating a new user. Send name email and password and the accessToken received while logging in as super admin.
 
-- GET :http://localhost:8000/user for getting all the users. Send in the access token received  while logging in as super admin.
+- GET :http://localhost:8000/user?q=jayan&page=1&size=10 for getting all the users by using page number and size of each page and the name of each user. Send in the access token received  while logging in as super admin.
 
 - DELETE :http://localhost:8000/user/:id for deleting the user with the id. Send in the access token received  while logging in as super admin. 
 
