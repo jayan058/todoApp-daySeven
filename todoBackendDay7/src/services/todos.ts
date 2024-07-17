@@ -37,7 +37,7 @@ export async function updateTodo(
   if (todo[0].userId != userId) {
     throw new UnauthorizedError("Cannot update someone else's Todo");
   }
-  todosModels.TodoModel.updateTodo(todo, name, isDone,userId);
+  todosModels.TodoModel.updateTodo(todo, name, isDone, userId);
   return "Success updation of todo";
 }
 export async function deleteTodo(id: string, userId: string) {

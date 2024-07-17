@@ -13,19 +13,7 @@ export async function createUser(
     next(error);
   }
 }
-export async function fetchUserById(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const id = req.params.id;
-    const message = await userServices.findUserById(id);
-    res.json(message);
-  } catch (error) {
-    next(error);
-  }
-}
+
 export async function getUsers(
   req: Request,
   res: Response,

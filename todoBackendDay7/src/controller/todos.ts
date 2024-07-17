@@ -38,7 +38,13 @@ export async function updateTodo(
     const id = req.params.id;
     const { name, isDone } = req.body;
     const userId = req.user!.id;
-    const message =await todoServices.updateTodo(id, name, isDone, userId, next);
+    const message = await todoServices.updateTodo(
+      id,
+      name,
+      isDone,
+      userId,
+      next
+    );
     res.json({ message });
   } catch (error) {
     next(error);
@@ -52,7 +58,7 @@ export async function deleteTodo(
   try {
     const id = req.params.id;
     const userId = req.user!.id;
-    let message =await todoServices.deleteTodo(id, userId);
+    let message = await todoServices.deleteTodo(id, userId);
     res.json(message);
   } catch (error) {
     next(error);

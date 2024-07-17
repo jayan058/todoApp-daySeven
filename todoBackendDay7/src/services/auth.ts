@@ -12,20 +12,20 @@ import { StatusCodes } from "http-status-codes";
 
 let refreshTokens: string[] = [];
 export async function login(email: string, password: string, res: Response) {
-  const userExists =await userModels.UserModel.findByEmail(email);
-  if (userExists.length==0) {
+  const userExists = await userModels.UserModel.findByEmail(email);
+  if (userExists.length == 0) {
     throw new NotFoundError("No Matching Email");
   }
-  
-  
+
   const match = await bcrypt.compare(password, userExists[0].password);
   if (!match) {
     throw new UnauthorizedError("Passwords Don't Match");
   }
-  let permissionsOfUser=(await userModels.UserModel.findUserPermission(email)).map(obj => obj.permissions)
+  let permissionsOfUser = (
+    await userModels.UserModel.findUserPermission(email)
+  ).map((obj) => obj.permissions);
 
-  
-  let payload={
+  let payload = {
     id: userExists[0].id,
     name: userExists[0].name,
     email: userExists[0].email,

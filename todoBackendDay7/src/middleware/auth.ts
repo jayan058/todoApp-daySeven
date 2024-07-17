@@ -28,7 +28,7 @@ export function authenticate(
       email: string;
       permissions: string[];
     };
-    
+
     req.user = decoded;
     next();
   } catch (error) {
@@ -43,9 +43,12 @@ export function authenticate(
 export function authorize() {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user!;
-  
-    
-    if (!user.permissions.includes("users.get")||!user.permissions.includes("users.post")||!user.permissions.includes("users.put")||!user.permissions.includes("users.delete")) {
+    if (
+      !user.permissions.includes("users.get") ||
+      !user.permissions.includes("users.post") ||
+      !user.permissions.includes("users.put") ||
+      !user.permissions.includes("users.delete")
+    ) {
       next(new ForbiddenError("Forbidden"));
       return;
     }
@@ -56,9 +59,15 @@ export function authorize() {
 export function authorizeUser() {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user!;
-   
-    
-    if (!user.permissions.includes("todos.get")||!user.permissions.includes("todos.post")||!user.permissions.includes("todos.put")||!user.permissions.includes("todos.delete")) {
+
+    console.log(user);
+
+    if (
+      !user.permissions.includes("todos.get") ||
+      !user.permissions.includes("todos.post") ||
+      !user.permissions.includes("todos.put") ||
+      !user.permissions.includes("todos.delete")
+    ) {
       next(new ForbiddenError("Forbidden"));
       return;
     }

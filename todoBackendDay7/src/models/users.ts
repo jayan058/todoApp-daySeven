@@ -1,32 +1,4 @@
-import { User } from "../interface/user";
 import BaseModel from "./baseModel";
-export type users = {
-  id: string;
-  name: string;
-  password: string;
-  email: string;
-  todos: string[];
-  permission: string[];
-};
-export let users: users[] = [
-  {
-    id: "1",
-    name: "jayan",
-    password: "$2b$10$z/92iZB5uuHVB.5Nwa2DRuV/VCSS8jZMTAnV.IcZzbWm7Jqn7rjMK",
-    email: "jayan@jayan.com",
-    todos: ["1"],
-    permission: ["super admin"],
-  },
-  {
-    id: "2",
-    name: "jaya",
-    password: "$2b$10$rjCKr1R6cwFFLsr5ohc64u.LbM6SXyzI.I/8fb1Nid5RQQtw2KBUK",
-    email: "jaya@jaya.com",
-    todos: ["2"],
-    permission: [],
-  },
-];
-
 export class UserModel extends BaseModel {
   static async create(name: string, password: string, email: string) {
     const userToCreate = {
@@ -67,7 +39,18 @@ export class UserModel extends BaseModel {
 
     return query;
   }
-  static async updateUser(user, email, password) {}
+  static async updateUser(email, password, userToUpdate) {
+    console.log("hello");
+    console.log(email);
+
+    await this.queryBuilder()
+      .from("users")
+      .where({ email: userToUpdate[0].email })
+      .update({
+        email: email,
+        password: password,
+      });
+  }
   static async findById(id) {
     let matchingId = await this.queryBuilder()
       .select("*")
@@ -89,20 +72,16 @@ export class UserModel extends BaseModel {
 
     return permissions;
   }
-}
 
-export function findUserByEmail(email: string) {
-  return users.find((user) => user.email === email);
-}
-export function findUserById(id: string) {
-  return users.find((user) => user.id == id);
-}
-
-export function deleteUser(user: User) {
-  users = users.filter((existingUser) => existingUser.id !== user.id);
-}
-export function updateUser(user: any, email: string, password: string) {
-  user.email = email;
-  user.password = password;
-  return user;
+  static async deleteUser(user) {
+    await this.queryBuilder()
+      .from("todos")
+      .where({ user_id: user[0].id })
+      .del();
+    await this.queryBuilder()
+      .from("users_roles")
+      .where({ user_id: user[0].id })
+      .del();
+    await this.queryBuilder().from("users").where({ id: user[0].id }).del();
+  }
 }
